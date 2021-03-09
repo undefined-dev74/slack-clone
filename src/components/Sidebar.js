@@ -15,8 +15,12 @@ import {
 import React from 'react';
 import styled from 'styled-components';
 import SidebarOption from './SidebarOption';
+import { useCollection } from 'react-firebase-hooks/firestore';
+import { db } from '../firebase';
 
 const Sidebar = () => {
+  const [channels, loading, error] = useCollection(db.collection('rooms'));
+
   return (
     <SidebarContainer>
       <SidebarHeader>
@@ -39,9 +43,15 @@ const Sidebar = () => {
       <SidebarOption Icon={ExpandLess} title="Show less" />
 
       <hr />
-      <SidebarOption Icon={ExpandMore} title="Channel" />
+      <SidebarOption Icon={ExpandMore} title="Channels" />
       <hr />
-      <SidebarOption Icon={Add} addChannelOption title="Add Channel" />
+      <SidebarOption Icon={Add} title="Add Channels" />
+
+      {channels?.docs.map(doc => {
+        return (
+          <SidebarOption key={doc.id} id={doc.id} title={doc.data().name} />
+        );
+      })}
     </SidebarContainer>
   );
 };
